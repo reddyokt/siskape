@@ -26,7 +26,7 @@
                                        <th scope="row"><?= $i; ?></th>
                                        <td><?= $rl['role'] ?></td>
                                        <td>
-                                           <a href="<?= base_url('admin/roleaccess/') . $rl['role_id'];
+                                           <a href="<?= base_url('admin/roleaccess/') . $rl['id'];
                                                     ?>" class="badge badge-warning">Set Akses</a>
                                            <a href="#" class="badge badge-success">Edit</a>
                                            <a href="#" class="badge badge-danger">Delete</a>
@@ -72,4 +72,5 @@
                        </form>
                    </div>
                </div>
+           </div>
            </div>

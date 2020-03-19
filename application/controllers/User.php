@@ -9,17 +9,35 @@ class User extends CI_Controller
         cek_login();
     }
 
-
     public function index()
     {
+        $this->load->model(array('Model_user'));
         $data['title'] = 'My Profile';
         $data['user'] = $this->db->get_where('user', ['email' =>
         $this->session->userdata('email')])->row_array();
+
+
+        $data['userdata'] =  $this->Model_user->joinuser();
 
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar', $data);
         $this->load->view('templates/topbar', $data);
         $this->load->view('user/index', $data);
+        $this->load->view('templates/footer');
+    }
+
+    public function daftar_kp()
+    {
+
+        $data['title'] = 'Daftar Kerja Praktek';
+        $data['user'] = $this->db->get_where('user', ['email' =>
+        $this->session->userdata('email')])->row_array();
+
+
+        $this->load->view('templates/header', $data);
+        $this->load->view('templates/sidebar', $data);
+        $this->load->view('templates/topbar', $data);
+        $this->load->view('user/daftar_kp', $data);
         $this->load->view('templates/footer');
     }
 }

@@ -6,7 +6,7 @@
          <div class="sidebar-brand-icon rotate-n-15">
              <i class="fas fa-flask"></i>
          </div>
-         <div class="sidebar-brand-text mx-3">SimLab</div>
+         <div class="sidebar-brand-text mx-3">SISKAPE</div>
      </a>
 
      <!--query menu disini-->
@@ -54,7 +54,7 @@
 
          <!-- Divider -->
          <li class="nav-item">
-             <a class="nav-link" href="<?= base_url('auth/logout'); ?>">
+             <a class="nav-link" href="<?= base_url('auth/logout/'); ?>">
                  <i class="fa fa-fw fa-sign-out-alt fa-chart-area"></i>
                  <span>Logout</span></a>
          </li>

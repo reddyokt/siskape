@@ -22,3 +22,16 @@ function cek_login()
         }
     }
 }
+
+function check_acces($role_id, $menu_id)
+{
+    $help   = get_instance();
+
+    $help->db->where('role_id', $role_id);
+    $help->db->where('menu_id', $menu_id);
+    $result = $help->db->get('user_access_menu');
+
+    if ($result->num_rows() > 0) {
+        return "checked='checked'";
+    }
+}

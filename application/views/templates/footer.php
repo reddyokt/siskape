@@ -2,7 +2,7 @@
  <footer class="sticky-footer bg-white">
      <div class="container my-auto">
          <div class="copyright text-center my-auto">
-             <span>Copyright &copy; simlab.tekim.umj.ac.id <?= date('Y'); ?></span>
+             <span>Copyright &copy; siskape.umj.ac.id <?= date('Y'); ?></span>
          </div>
      </div>
  </footer>
@@ -32,7 +32,7 @@
              <div class="modal-body">Klik Tombol Logout dibawah jika Ya</div>
              <div class="modal-footer">
                  <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                 <a class="btn btn-primary" href="<?= base_url('auth/logout'); ?>">Logout</a>
+                 <a class="btn btn-primary" href="<?= base_url('Auth/logout'); ?>">Logout</a>
              </div>
          </div>
      </div>
@@ -47,6 +47,27 @@
 
  <!-- Custom scripts for all pages-->
  <script src="<?= base_url('assets/') ?>js/sb-admin-2.min.js"></script>
+
+ <script>
+     $('.form-check-input').on('click', function() {
+         const menuId = $(this).data('menu');
+         const roleId = $(this).data('role');
+
+         $.ajax({
+             url: "<?= base_url('admin/change_access'); ?>",
+             type: 'post',
+             data: {
+                 menuId: menuId,
+                 roleId: roleId
+             },
+             success: function() {
+                 document.location.href = "<?= base_url('admin/roleaccess/'); ?>" + roleId;
+             }
+
+         });
+
+     });
+ </script>
 
  </body>
 

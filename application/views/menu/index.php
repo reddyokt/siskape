@@ -9,6 +9,7 @@
 
                <div class="row">
                    <div class="col-lg-6">
+
                        <a href="" class="btn btn-primary mb-3" data-toggle="modal" data-target="#newMenuModal">Tambah Menu</a>
 
                        <table class="table table-hover">
@@ -56,7 +57,6 @@
                            </button>
                        </div>
                        <form action="<?= base_url('menu'); ?>" method="POST">
-
                            <div class="modal-body">
                                <div class="form-group">
                                    <input type="text" class="form-control" id="menu" name="menu" placeholder="Masukkan Nama Menu">
