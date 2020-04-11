@@ -18,6 +18,7 @@ class Model_daftarkp extends CI_Model
         daftar_kp.bukti_surat_perusahaan');
         $this->db->join('daftar_kp', 'user.nim = daftar_kp.created_by');
         $this->db->from('user');
+        $this->db->where('daftar_kp.created_by', $this->session->userdata('nim'));
         $query = $this->db->get();
         return $query->result();
     }

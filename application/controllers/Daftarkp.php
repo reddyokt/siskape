@@ -17,7 +17,7 @@ class Daftarkp extends CI_Controller
         $this->session->userdata('email')])->row_array();
 
         $data['daftar_kp'] = $this->db->get_where('daftar_kp', ['created_by' =>
-        $this->session->userdata('created_by')])->row_array();
+        $this->session->userdata('nim')])->row_array();
         $data['userdatas'] = $this->Model_daftarkp->index_kp();
 
         $this->load->view('templates/header', $data);
