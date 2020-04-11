@@ -6,166 +6,115 @@ class Daftarkp extends CI_Controller
     function __construct()
     {
         parent::__construct();
+        $this->load->model(array('Model_daftarkp'));
+        $this->load->helper(array('form', 'url'));
     }
 
     public function index()
     {
-        $data['bahan'] = $this->Model_daftarkp->tampil_data()->result();
+        $data['title'] = 'List Daftar';
+        $data['user'] = $this->db->get_where('user', ['email' =>
+        $this->session->userdata('email')])->row_array();
 
-        $this->load->view('templates/header');
-        $this->load->view('templates/sidebar');
-        $this->load->view('templates/topbar');
-        $this->load->view('Daftarkp/detail_daftarkp', $data);
-        $this->load->view('template/footer');
+        $data['daftar_kp'] = $this->db->get_where('daftar_kp', ['created_by' =>
+        $this->session->userdata('created_by')])->row_array();
+        $data['userdatas'] = $this->Model_daftarkp->index_kp();
+
+        $this->load->view('templates/header', $data);
+        $this->load->view('templates/sidebar', $data);
+        $this->load->view('templates/topbar', $data);
+        $this->load->view('daftarkp/index', $data);
+        $this->load->view('templates/footer');
     }
 
-    public function tambah_aksi()
+
+    public function daftarkp()
     {
-        $nama_bahan            = $this->input->post('nama_bahan');
-        $rumus_kimia_bahan     = $this->input->post('rumus_kimia_bahan');
-        $qty                   = $this->input->post('qty');
-        $satuan                = $this->input->post('satuan');
-        $tempat_simpan         = $this->input->post('tempat_simpan');
-        $foto                  = $_FILES['foto'];
-        if ($foto = '') {
+        $data['title'] = 'Daftar Kerja Praktek';
+        $data['user'] = $this->db->get_where('user', ['email' =>
+        $this->session->userdata('email')])->row_array();
+
+        $this->form_validation->set_rules('nama_perusahaan', 'Nama Perusahaan', 'required|trim');
+        $this->form_validation->set_rules('alamat_perusahaan', 'Alamat Perusahaan', 'required|trim');
+
+        if ($this->form_validation->run() == false) {
+            $this->load->view('templates/header', $data);
+            $this->load->view('templates/sidebar', $data);
+            $this->load->view('templates/topbar', $data);
+            $this->load->view('daftarkp/daftar_kp', $data);
+            $this->load->view('templates/footer');
         } else {
-            $config['upload_path']      = './assets/foto';
-            $config['allowed_types']    = 'jpg|jpeg|png';
 
-            $this->load->library('upload', $config);
-            if (!$this->upload->do_upload('foto')) {
-                echo "Upload Gagal, Periksa Kembali File Anda";
-                die();
-            } else {
-                $foto = $this->upload->data('file_name');
+            $nama_perusahaan   = $this->input->post('nama_perusahaan');
+            $alamat_perusahaan = $this->input->post('alamat_perusahaan');
+            $upload_bukti_khs  = $_FILES['bukti_khs'];
+            if ($upload_bukti_khs) {
+                $config['allowed_types'] = 'jpg|jpeg|png';
+                $config['max_size']     = '2048';
+                $config['upload_path']  = './assets/img/bukti/';
+
+                $this->load->library('upload', $config);
+                $this->upload->initialize($config);
+
+                if (!$this->upload->do_upload('bukti_khs')) {
+                    $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">' .
+                        $this->upload->display_errors() . '</div>');
+                    redirect('daftarkp/daftarkp');
+                } else {
+                    $upload_bukti_khs = $this->upload->data('file_name');
+                }
             }
-        }
+            $upload_bukti_bayar  = $_FILES['bukti_bayar'];
+            if ($upload_bukti_bayar) {
+                $config['allowed_types'] = 'jpg|jpeg|png';
+                $config['max_size']     = '2048';
+                $config['upload_path']  = './assets/img/bukti/';
 
-        $data = array(
-            'nama_bahan'            => $nama_bahan,
-            'rumus_kimia_bahan'     => $rumus_kimia_bahan,
-            'qty'                   => $qty,
-            'satuan'                => $satuan,
-            'tempat_simpan'         => $tempat_simpan,
-            'foto'                  => $foto
-        );
+                $this->load->library('upload', $config);
+                $this->upload->initialize($config);
 
-        $this->Model_daftarkp->input_data($data, 'bahan');
-        $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h3 style="text-align:center;">Data Berhasil Ditambahkan</h3>
-      </div>');
-        redirect('bahan/index');
-    }
-
-    public function hapus_data($id_bahan)
-    {
-        $where = array('id_bahan' => $id_bahan);
-        $this->Model_daftarkp->hapus_data($where, 'bahan');
-        $this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h3 style="text-align:center;">Data Berhasil Dihapus!</h3>
-      </div>');
-        redirect('bahan/index');
-    }
-
-    public function edit($id_bahan)
-    {
-        $where = array('id_bahan' => $id_bahan);
-        $data['bahan'] =  $this->Model_daftarkp->edit_data($where, 'bahan')->result();
-
-        $this->load->view('templates/header');
-        $this->load->view('templates/sidebar');
-        $this->load->view('templates/topbar');
-        $this->load->view('bahan/edit_data_bahan', $data);
-        $this->load->view('template/footer');
-    }
-
-    public function update()
-    {
-        $id_bahan              = $this->input->post('id_bahan');
-        $nama_bahan            = $this->input->post('nama_bahan');
-        $rumus_kimia_bahan     = $this->input->post('rumus_kimia_bahan');
-        $qty                   = $this->input->post('qty');
-        $satuan                = $this->input->post('satuan');
-        $tempat_simpan         = $this->input->post('tempat_simpan');
-        $foto                  = $_FILES['foto'];
-        if ($foto = '') {
-        } else {
-            $config['upload_path']      = './assets/foto';
-            $config['allowed_types']    = 'jpg|jpeg|png';
-
-            $this->load->library('upload', $config);
-            if (!$this->upload->do_upload('foto')) {
-                echo "Upload Gagal, Periksa Kembali File Anda";
-                die();
-            } else {
-                $foto = $this->upload->data('file_name');
+                if (!$this->upload->do_upload('bukti_bayar')) {
+                    $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">' .
+                        $this->upload->display_errors() . '</div>');
+                    redirect('daftarkp/daftarkp');
+                } else {
+                    $upload_bukti_bayar = $this->upload->data('file_name');
+                }
             }
+            $upload_bukti_surat_perusahaan  = $_FILES['bukti_surat_perusahaan'];
+            if ($upload_bukti_surat_perusahaan) {
+                $config['allowed_types'] = 'jpg|jpeg|png';
+                $config['max_size']     = '2048';
+                $config['upload_path']  = './assets/img/bukti/';
+
+                $this->load->library('upload', $config);
+                $this->upload->initialize($config);
+
+                if (!$this->upload->do_upload('bukti_surat_perusahaan')) {
+                    $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">' .
+                        $this->upload->display_errors() . '</div>');
+                    redirect('daftarkp/daftarkp');
+                } else {
+                    $upload_bukti_surat_perusahaan = $this->upload->data('file_name');
+                }
+            }
+
+            $created_by = $data['user']['nim'];
+            $data = [
+                'nama_perusahaan'         => $nama_perusahaan,
+                'alamat_perusahaan'       => $alamat_perusahaan,
+                'bukti_khs'               => $upload_bukti_khs,
+                'bukti_bayar'             => $upload_bukti_bayar,
+                'bukti_surat_perusahaan'  => $upload_bukti_surat_perusahaan,
+                'created_by'              => $created_by,
+                'date_created'            => time()
+            ];
+            $this->db->insert('daftar_kp', $data);
+
+            $this->session->set_flashdata('message', '<div class="alert alert-success text-center" role="alert">
+            Pendaftaran Kerja Praktek Sukses
+          </div>');
+            redirect('daftarkp/daftarkp');
         }
-        $data = array(
-            'id_bahan'              => $id_bahan,
-            'nama_bahan'            => $nama_bahan,
-            'rumus_kimia_bahan'     => $rumus_kimia_bahan,
-            'qty'                   => $qty,
-            'satuan'                => $satuan,
-            'tempat_simpan'         => $tempat_simpan,
-            'foto'                  => $foto
-        );
-
-        $where = array(
-            'id_bahan' => $id_bahan
-        );
-
-        $this->Model_daftarkp->update_data($where, $data, 'bahan');
-        $this->session->set_flashdata('message', '<div class="alert alert-info alert-dismissible" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h3 style="text-align:center;">Data Berhasil Dirubah </h3>
-      </div>');
-        redirect('bahan/index');
-    }
-    public function detail($id_bahan)
-    {
-        $this->load->model('Model_daftarkp');
-        $detail = $this->Model_daftarkp->detail_data($id_bahan);
-        $data['detail'] = $detail;
-
-        $this->load->view('templates/header');
-        $this->load->view('templates/sidebar');
-        $this->load->view('templates/topbar');
-        $this->load->view('bahan/detail_bahan', $data);
-        $this->load->view('template/footer');
-    }
-
-    public function print()
-    {
-        $data['bahan'] = $this->Model_daftarkp->tampil_data("bahan")->result();
-        $this->load->library('pdf');
-        $this->load->view('bahan/print_bahan', $data);
-    }
-
-    public function pdf()
-    {
-        $this->load->library('dompdf_gen');
-        $data['bahan'] = $this->Model_daftarkp->tampil_data('bahan')->result();
-
-        $this->load->view('bahan/laporan_pdf', $data);
-        $paper_size  = 'A4';
-        $orientation = 'landscape';
-        $html = $this->output->get_output();
-        $this->dompdf->set_paper($paper_size, $orientation);
-
-        $this->dompdf->load_html($html);
-        $this->dompdf->render();
-        $this->dompdf->stream("laporan_bahan.pdf", array('attachment' => 0));
-    }
-
-    public function excel()
-    {
-        $this->load->library('dompdf_gen');
-        $data['bahan'] = $this->Model_daftarkp->tampil_data('bahan')->result();
-
-        require(APPPATH . 'PHPExcel-1.8/Classes/PHPExcel.php');
-        require(APPPATH . 'PHPExcel-1.8/Classes/PHPExcel/Writer/Excel2007.php');
     }
 }

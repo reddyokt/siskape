@@ -5,48 +5,41 @@
 
     <!--card daftar pengjauan kp-->
 
-    <div class="card border-info mb-3" style="max-width: 80%;">
-        <div class="card-header">Pengajuan KP</div>
-        <div class="card-body text-info">
-            <h5 class="card-title">Reddy Oktariawan</h5>
-            <table class="table-hover">
-                <tr>
-                    <th>NIM</th>
-                    <td>: </td>
-                    <td>2017470104</td>
-                </tr>
-                <tr>
-                    <th>Program Studi</th>
-                    <td>: </td>
-                    <td>Teknik Kimia</td>
-                </tr>
-                <tr>
-                    <th>Fakultas</th>
-                    <td>: </td>
-                    <td>Fakultas Teknik</td>
-                </tr>
-                <tr>
-                    <th>Nama Perusahaan</th>
-                    <td>: </td>
-                    <td>Lintas Artha</td>
-                </tr>
-                <tr>
-                    <th>Alamat Perusahaan</th>
-                    <td>: </td>
-                    <td>426 Jordy Lodge Cartwrightshire, SC 88120-6700</td>
-                </tr>
-            </table>
+    <?php foreach ($userdata as $user) : ?>
+        <div class="card border-info mb-1" style="max-width: 80%;">
+            <div class="card-header"><?= $user->name ?></div>
+            <div class="card-body text-info">
+                <table class="table-hover">
+                    <tr>
+                        <th>NIM</th>
+                        <td>: </td>
+                        <td><?= $user->nim ?></td>
+                    </tr>
+                    <tr>
+                        <th>Program Studi</th>
+                        <td>: </td>
+                        <td><?= $user->prodi ?></td>
+                    </tr>
+                    <tr>
+                        <th>Nama Perusahaan</th>
+                        <td>: </td>
+                        <td><?= $user->nama_perusahaan ?></td>
+                    </tr>
+                    <tr>
+                        <th>Alamat Perusahaan</th>
+                        <td>: </td>
+                        <td><?= $user->alamat_perusahaan ?></td>
+                    </tr>
+                </table>
 
-            <a href="#" class="btn btn-outline-info " role="button" aria-pressed="true">Bukti KHS</a>
-            <a href="#" class="btn btn-outline-info " role="button" aria-pressed="true">Bukti Bayar</a>
-            <a href="#" class="btn btn-outline-info " role="button" aria-pressed="true">Bukti Lainnya</a>
-            <a href="#" class="btn btn-danger float-right ml-2" role="button" aria-pressed="true">Ditolak</a>
-            <a href="#" class="btn btn-success float-right" role="button" aria-pressed="true">Terima</a>
-
-
+                <a href="<?= base_url('/assets/img/bukti/') . $user->bukti_khs ?>" target=" _blank"" class=" btn btn-outline-info " role=" button" aria-pressed="true">Bukti KHS</a>
+                <a href="<?= base_url('/assets/img/bukti/') . $user->bukti_bayar ?>" target=" _blank"" class=" btn btn-outline-info " role=" button" aria-pressed="true">Bukti Bayar</a>
+                <a href="<?= base_url('/assets/img/bukti/') . $user->bukti_surat_perusahaan ?>" target=" _blank"" class=" btn btn-outline-info " role=" button" aria-pressed="true">Bukti Surat Perusahaan </a>
+                <a href="#" class="btn btn-danger float-right ml-2" role="button" aria-pressed="true">Ditolak</a>
+                <a href="#" class="btn btn-success float-right mb-3" role="button" aria-pressed="true">Terima</a>
+            </div>
         </div>
-
-    </div>
+    <?php endforeach; ?>
     <!-- /.container-fluid -->
 </div>
 <!-- End of Main Content -->

@@ -12,6 +12,9 @@ class Auth extends CI_Controller
 
     public function index()
     {
+        if ($this->session->userdata('email')) {
+            redirect('user');
+        }
         $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email');
         $this->form_validation->set_rules('password', 'Password', 'trim|required');
 
@@ -42,7 +45,8 @@ class Auth extends CI_Controller
                 if (password_verify($password, $user['password'])) {
                     $data = [
                         'email' => $user['email'],
-                        'role_id' => $user['role_id']
+                        'role_id' => $user['role_id'],
+                        'nim' => $user['nim']
                     ];
                     $this->session->set_userdata($data);
                     //redirect role
@@ -56,7 +60,7 @@ class Auth extends CI_Controller
                 } else {
                     $this->session->set_flashdata('message', '<div class="alert alert-warning text-center" role="alert">
                     Password yang anda Masukkan Salah
-                  </div>');
+                    </div>');
                     redirect('auth');
                 }
             } else {
@@ -67,7 +71,7 @@ class Auth extends CI_Controller
             }
         } else {
             $this->session->set_flashdata('message', '<div class="alert alert-danger text-center" role="alert">
-                Email Tidak Terdaftar
+            Email Tidak Terdaftar
               </div>');
             redirect('auth');
         }
@@ -75,10 +79,16 @@ class Auth extends CI_Controller
 
     public function registration()
     {
-        $this->form_validation->set_rules('name', 'Name', 'required|trim');
+        if ($this->session->userdata('email')) {
+            redirect('user');
+        }
+        $this->form_validation->set_rules('nim', 'NIM', 'required|trim|exact_length[10]|is_unique[user.nim]', [
+            'is_unique'     => 'NIM sudah Terdaftar'
+        ]);
         $this->form_validation->set_rules('email', 'Email', 'required|trim|valid_email|is_unique[user.email]', [
             'is_unique'      => 'Email Sudah Terdaftar'
         ]);
+        $this->form_validation->set_rules('prodi', 'Prodi', 'required|trim');
         $this->form_validation->set_rules(
             'password1',
             'Password',
@@ -98,8 +108,11 @@ class Auth extends CI_Controller
             $this->load->view('templates/auth_footer');
         } else {
             $data = [
+                'nim'      => htmlspecialchars($this->input->post('nim', true)),
                 'name'      => htmlspecialchars($this->input->post('name', true)),
                 'email'     => htmlspecialchars($this->input->post('email', true)),
+                'prodi'     => htmlspecialchars($this->input->post('prodi', true)),
+
                 'image'     => 'default.jpg',
                 'password'  => password_hash(
                     $this->input->post('password1'),

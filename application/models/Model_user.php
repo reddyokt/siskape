@@ -10,13 +10,14 @@ class Model_user extends CI_Model
         //Codeigniter : Write Less Do More
     }
 
-    public function joinuser()
+    public function detail_data($id = NULL)
     {
+        $query = $this->db->get()->row();
         $this->db->select('*');
-        $this->db->join('fakultas', 'user.fakultas_id = fakultas.fakultas_id');
-        $this->db->join('prodi', 'prodi.fakultas_id = fakultas.fakultas_id');
+        $this->db->join('user', 'user.fakultas_id = fakultas.fakultas_id');
+        $this->db->join('user', 'user.prodi_id = prodi.prodi_id');
         $this->db->from('user');
-        $query = $this->db->get();
-        return $query->result();
+
+        return $query;
     }
 }
